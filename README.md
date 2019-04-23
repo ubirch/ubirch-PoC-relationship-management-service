@@ -13,7 +13,7 @@ One use case could be
 
 ## Architecture
 
-![alt text](architecture.png)
+![architecture](img/architecture.png)
 
 ### Swagger
 Swagger allows the API to be nicely displayed, facilitate testing as well.
@@ -76,7 +76,41 @@ $ docker run -p 80:8080 -e API_URL=http://0.0.0.0:8080/api-docs/swagger.json swa
 ## Functionalities
 For the moment, some pieces here and there are working, that I am constantly breaking and fixing. As you'll notice, it is a multicultural project (mostly some java and scala), but soon the java will be removed.
 
-### Adding vertexes
-You can add vertexes
+### Adding vertices
 
-//TODO complete
+It is possible, through the REST API, to add some vertices, different use case exist:
+
+* Two new vertices (not already present in the database): both are created and are linked with an edge.
+* One already exist, one is new: the new one is created, and both are linked
+* The two vertices already exist: if they're not linked, an edge will be created between them, if not, nothing appens.
+
+A newly created vertex can contain the following item:
+
+* **mandatory** an ID (int)
+* a list<String, String> of properties (ex: *name:aName*)
+
+An edge between two vertices can contain a list<String, String> of properties
+
+### Accessing vertices
+
+It is possible to get all the informations about a vertex if its ID is provided. A JSON file is returned containing its element (ID, properties, ...).
+
+An optional depth can be given. In this case, its neighbours ID(other vertices linked at a given distance) will be returned.
+
+### Graph visualisation
+
+GraphExp provide a way to display the graph stored in the database.
+
+
+
+## TODO
+
+Lots of things!
+
+* Translate the middle layer to scala
+* Add unit testing
+* Evaluate if ElasticSearch is really needed
+* Clean up the code and refactor it
+* Fix Jetty error
+* Modify GraphExp so that the graph can not be modified through it, just accessed.
+* Make it easily deployable
