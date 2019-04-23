@@ -9,6 +9,8 @@ import org.json4s.JsonDSL._
 import org.json4s.jackson.Serialization
 import org.slf4j.{Logger, LoggerFactory}
 import org.json4s.jackson.JsonMethods._
+import scala.collection.JavaConverters._
+
 
 class Util {
 
@@ -60,11 +62,22 @@ class Util {
       i = i + 1
     }
 
-
     arrayVertexReformated.foreach(v => log.info(v.toString))
     arrayVertexReformated
   }
 
+  /**
+    * Convert to json a hashmap <Integer, ArrayList<Integer>>
+    * @param hashMap the hashmap to be converted
+    * @return json string of the map
+    */
+  def reformatNeighboor(hashMap: util.HashMap[Integer, util.ArrayList[Integer]]): String = {
+
+    implicit val formats = org.json4s.DefaultFormats
+    val scalaMap = hashMap.asScala
+
+    Serialization.write(scalaMap)
+  }
 
 
 /*

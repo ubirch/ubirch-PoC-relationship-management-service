@@ -31,18 +31,23 @@ public class AddVertexes {
     /**
      * Method used to add two vertex to the JanusGraph database
      * @param id1 the (public) id of the first vertex
-     * @param properties1 a HashMap containing the properties and their values of the first vertex
+     * @param p1 a HashMap containing the properties and their values of the first vertex
      * @param id2 the (public) id of the second vertex
-     * @param properties2 a HashMap containing the properties and their values of the second vertex
-     * @param propertiesE a HashMap containing the properties and their values of the edge
+     * @param p2 a HashMap containing the properties and their values of the second vertex
+     * @param pE a HashMap containing the properties and their values of the edge
      * @return
      */
-    public static String addTwoVertexes(int id1, HashMap<String, String> properties1, int id2, HashMap<String, String> properties2, HashMap<String, String> propertiesE) {
+    public static String addTwoVertexes(int id1, Map<String, String> p1, int id2, Map<String, String> p2, Map<String, String> pE) {
 
         sCon = new GremlinServerConnector();
         graph = sCon.getGraph();
         g = sCon.getTraversal();
         b = sCon.getBindings();
+
+        // tmp
+        HashMap<String, String> properties1 = new HashMap<>(p1);
+        HashMap<String, String> properties2 = new HashMap<>(p2);
+        HashMap<String, String> propertiesE = new HashMap<>(pE);
 
         VertexStruct v1 = new VertexStruct(id1, g);
         VertexStruct v2 = new VertexStruct(id2, g);

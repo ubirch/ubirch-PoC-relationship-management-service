@@ -20,22 +20,32 @@ public class AddVertexesTest {
     private static final String IN_V = "inV";
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 
-    /**
-     * Creates for vertex, all linked together, and (1 --> 3), (2 --> 4).t
-     * @param args
-     */
+
 
     public static void main(String[] args) {
+        populateDb();
+    }
+
+    /**
+     * Creates some vertex, and link them
+     */
+    private static void populateDb(){
         HashMap<String, String> p1 = new HashMap<>();
         HashMap<String, String> p2 = new HashMap<>();
         HashMap<String, String> p3 = new HashMap<>();
         HashMap<String, String> p4 = new HashMap<>();
+        HashMap<String, String> p5 = new HashMap<>();
+        HashMap<String, String> p6 = new HashMap<>();
+        HashMap<String, String> p7 = new HashMap<>();
         HashMap<String, String> e12 =  new HashMap<>();
         HashMap<String, String> e23 =  new HashMap<>();
         HashMap<String, String> e34 =  new HashMap<>();
         HashMap<String, String> e41 =  new HashMap<>();
         HashMap<String, String> e13 =  new HashMap<>();
         HashMap<String, String> e24 =  new HashMap<>();
+        HashMap<String, String> e45 =  new HashMap<>();
+        HashMap<String, String> e56 =  new HashMap<>();
+        HashMap<String, String> e67 =  new HashMap<>();
 
         p1.put(NAME, "name1");
         p1.put("RANDOM", "a string");
@@ -45,6 +55,9 @@ public class AddVertexesTest {
         p2.put(NAME, "name2");
         p3.put(NAME, "name3");
         p4.put(NAME, "name4");
+        p5.put(NAME, "name5");
+        p6.put(NAME, "name6");
+        p7.put(NAME, "name7");
 
         e12.put(LABEL, "different label");
         e12.put(NAME, "it has a name");
@@ -54,6 +67,9 @@ public class AddVertexesTest {
         e41.put(LABEL, "linked to");
         e13.put(LABEL, "linked to");
         e24.put(LABEL, "linked to");
+        e45.put(LABEL, "linked to");
+        e56.put(LABEL, "linked to");
+        e67.put(LABEL, "linked to");
 
 
 
@@ -63,9 +79,10 @@ public class AddVertexesTest {
         addTwoVertexes(4, p4, 1, p1, e41);
         addTwoVertexes(1, p1,  3, p3, e13);
         addTwoVertexes( 2, p2,  4, p4, e24);
+        addTwoVertexes( 4, p4,  5, p5, e45);
+        addTwoVertexes( 5, p5,  6, p6, e56);
+        addTwoVertexes( 6, p6,  7, p7, e67);
     }
-
-
 
 
 }

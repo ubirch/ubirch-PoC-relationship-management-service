@@ -17,8 +17,11 @@ case class VertexStruct(label: String, properties: Map[String, String]) {
   }
 
   def toJson: String ={
-    val json =
-        ("label" -> this.label) ~ ("properties" -> this.properties)
+
+    var propertiesReformated: Map[String, String] = Map()
+    for((key, value) <- this.properties) propertiesReformated += (key.toString -> value.toString.substring(1, value.length - 1))
+
+    val json = ("label" -> this.label) ~ ("properties" -> propertiesReformated)
     compact(render(json))
   }
 

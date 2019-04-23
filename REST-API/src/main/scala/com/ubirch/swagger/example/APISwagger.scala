@@ -11,7 +11,7 @@ object RestApiInfo extends ApiInfo(
   "Docs for the Ubirch REST API",
   "http://ubirch.de",
   "benoit.george@ubirch.com",
-  "MIT",
-  "http://opensource.org/licenses/MIT")
+  "Apache V2",
+  "https://www.apache.org/licenses/LICENSE-2.0")
 
 class ApiSwagger extends Swagger(Swagger.SpecVersion, "1.0.0", RestApiInfo)
