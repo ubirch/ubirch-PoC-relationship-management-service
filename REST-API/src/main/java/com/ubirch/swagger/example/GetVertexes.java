@@ -86,7 +86,7 @@ public class GetVertexes {
     /**
      * Return a vertex based on its (public) id
      * @param id the public id of the vertex
-     * @return a VertexStruct containing informations about the vertex
+     * @return a VertexStructDb containing informations about the vertex
      */
     public static VertexStruct getVertexById(int id) {
 
@@ -121,7 +121,7 @@ public class GetVertexes {
     /**
      * Get a vertex based on their (private) id
      * @param id the (private) id of the vertex
-     * @return a VertexStruct containing informations about the vertex
+     * @return a VertexStructDb containing informations about the vertex
      */
     private static VertexStruct getVertexByPrivateId(int id) {
 
@@ -264,7 +264,7 @@ public class GetVertexes {
     }
 
     /**
-     * Convert a HashMap<Integer, Integer> into a HashMap<Integer, ArrayList<VertexStruct>>
+     * Convert a HashMap<Integer, Integer> into a HashMap<Integer, ArrayList<VertexStructDb>>
      * get the associated vertex to the id in the original hashmap, link them with the distance to the original one
      * @param originalHashMap
      * @return newHashMap

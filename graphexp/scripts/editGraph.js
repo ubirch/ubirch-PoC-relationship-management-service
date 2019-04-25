@@ -1,3 +1,4 @@
+/*
 	function editGraph() {
 		var x = document.getElementById("editGraph")
 		if(x.style.display == "none"){
@@ -127,4 +128,4 @@
 		}
 	}
 	
-	
+*/

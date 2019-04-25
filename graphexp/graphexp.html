@@ -19,7 +19,7 @@
         <script src="scripts/graph_viz.js"></script>
         <script src="scripts/graphioGremlin.js"></script>
         <script src="scripts/bootstrap.min.js"></script>
-        <script src="scripts/editGraph.js"></script>
+        <!--<script src="scripts/editGraph.js"></script>-->
 
         <script type="text/javascript">
 
@@ -83,12 +83,12 @@
             <span class="navbar-toggler-icon"></span><span style="color: white;"> Form Queries</span>
         </button>
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-            <li style="margin-left: 10px;">
+<!--            <li style="margin-left: 10px;">
                 <button style="float;left; position: relative;" class="btn btn-default" onclick="editGraph()"> Edit
                     Graph
                 </button>
-            </li>
-            <li>
+            </li>-->
+            <!--<li>
                 <div class="form-inline my-2 my-lg-0" id="editGraph" style="display:none; margin-left:10px;">
                     <div class="form-inline my-2 my-lg-0">
                         <button class="btn btn-default" onclick="addVertexForm()"> Add Vertex</button>
@@ -99,7 +99,7 @@
                         <br>
                     </div>
                 </div>
-            </li>
+            </li>-->
         </ul>
         <div class="form-inline my-2 my-lg-0" style="color:white;">
             <div class="form-inline my-2 my-lg-0">
@@ -131,7 +131,7 @@
             <svg></svg>
         </div>
         <div class="aside left_bar_edit">
-            <div class="nav input_unit_container" , id="addVertexForm" style="display:none;">
+            <!--<div class="nav input_unit_container" , id="addVertexForm" style="display:none;">
                 <h2>Add Vertex :</h2>
                 <div class="nav input_unit_container form-group">
                     <label for="vertexLabel">Vertex Label: </label>
@@ -149,8 +149,8 @@
                            placeholder="Enter Comma Seperated Property Value (e.g. Sandeep,27,male)">
                 </div>
                 <button class="btn btn-default btn-block" onclick="addVertex()"> Add Vertex</button>
-            </div>
-            <div class="nav input_unit_container" , id="editVertexForm" style="display:none;">
+            </div>-->
+            <!--<div class="nav input_unit_container" , id="editVertexForm" style="display:none;">
                 <h2>Edit Vertex :</h2>
                 <div class="nav input_unit_container form-group">
                     <label for="vertexId"> Vertex ID: </label>
@@ -168,8 +168,8 @@
                            placeholder="Enter Comma Seperated Property Value (e.g. Sandeep,25)">
                 </div>
                 <button class="btn btn-default btn-block" onclick="editVertex()"> Edit Vertex</button>
-            </div>
-            <div class="nav input_unit_container" , id="addEditEdgeForm" style="display:none;">
+            </div>-->
+            <!--<div class="nav input_unit_container" , id="addEditEdgeForm" style="display:none;">
                 <h2>Add / Edit Edge :</h2>
                 <div class="nav input_unit_container form-group">
 
@@ -202,7 +202,7 @@
                            placeholder="Enter Comma Seperated Property Value">
                 </div>
                 <button class="btn btn-default btn-block" onclick="addEditEdge()"> Add/Edit Edge</button>
-            </div>
+            </div>-->
         </div>
         <div class="aside left_bar" style="pointer-events:auto;">
             <div id="graphInfoBar" style="pointer-events:auto;">

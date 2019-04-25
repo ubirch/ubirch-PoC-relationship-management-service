@@ -1,7 +1,7 @@
 package com.ubirch.swagger.example;
 
 import com.tinkerpop.gremlin.java.GremlinPipeline;
-import com.ubirch.swagger.example.StructDB.VertexStruct;
+import com.ubirch.swagger.example.StructDB.VertexStructDb;
 import org.apache.tinkerpop.gremlin.process.traversal.Bindings;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
@@ -49,8 +49,8 @@ public class AddVertexes {
         HashMap<String, String> properties2 = new HashMap<>(p2);
         HashMap<String, String> propertiesE = new HashMap<>(pE);
 
-        VertexStruct v1 = new VertexStruct(id1, g);
-        VertexStruct v2 = new VertexStruct(id2, g);
+        VertexStructDb v1 = new VertexStructDb(id1, g);
+        VertexStructDb v2 = new VertexStructDb(id2, g);
         int howMany = howManyExist(v1, v2);
         logger.info("how many exist?: " + howMany);
         switch (howMany) {
@@ -83,7 +83,7 @@ public class AddVertexes {
      * @param v2 the second vertex
      * @return an integer between 0 and 2 indicating how many vertex exist
      */
-    private static int howManyExist(VertexStruct v1, VertexStruct v2) {
+    private static int howManyExist(VertexStructDb v1, VertexStructDb v2) {
         int i = 0;
         if (v1.exist()) {i++;}
         if (v2.exist()) {i++;}
@@ -98,7 +98,7 @@ public class AddVertexes {
      * @param p2 properties of the second vertex
      * @param propEdge properties of the edge
      */
-    private static void noneExit(VertexStruct v1, VertexStruct v2, HashMap<String, String> p1, HashMap<String, String> p2, HashMap<String, String> propEdge) {
+    private static void noneExit(VertexStructDb v1, VertexStructDb v2, HashMap<String, String> p1, HashMap<String, String> p2, HashMap<String, String> propEdge) {
         v1.addVertex(p1, g, b);
         v2.addVertex(p2, g, b);
 
@@ -113,7 +113,7 @@ public class AddVertexes {
      * @param p2 properties of the second vertex
      * @param propEdge properties of the edge
      */
-    private static void oneExist(VertexStruct v1, HashMap<String, String> p1, VertexStruct v2, HashMap<String, String> p2, HashMap<String, String> propEdge) {
+    private static void oneExist(VertexStructDb v1, HashMap<String, String> p1, VertexStructDb v2, HashMap<String, String> p2, HashMap<String, String> propEdge) {
         assert (v1.exist() || v2.exist()): "should not happen";
         if(v1.exist()){
             v2.addVertex(p2, g, b);
@@ -130,7 +130,7 @@ public class AddVertexes {
      * @param v2 second vertex
      * @param propEdge properties of the edge
      */
-    private static void bothExist(VertexStruct v1, VertexStruct v2, HashMap<String, String> propEdge) {
+    private static void bothExist(VertexStructDb v1, VertexStructDb v2, HashMap<String, String> propEdge) {
         if(areVertexesLinked(v1, v2)){
             logger.info("V1 and V2 are already linked");
         } else{
@@ -144,7 +144,7 @@ public class AddVertexes {
      * @param vertexTo Vertex to where the edge will be created
      * @param properties Properties of the edge
      */
-    private static void createEdge(VertexStruct vertexFrom, VertexStruct vertexTo, HashMap<String, String> properties) {
+    private static void createEdge(VertexStructDb vertexFrom, VertexStructDb vertexTo, HashMap<String, String> properties) {
         String label = properties.get(LABEL);
         if (label == null){
             label = "linked to";
@@ -167,7 +167,7 @@ public class AddVertexes {
      * @param v2 second vertex
      * @return true if they''e already linked. false otherwise
      */
-    private static boolean areVertexesLinked(VertexStruct v1, VertexStruct v2) {
+    private static boolean areVertexesLinked(VertexStructDb v1, VertexStructDb v2) {
         GraphTraversal oneWay =  g.V(v1.getVertex()).outE().as("e").inV().has(ID, v2.getId()).select("e");
         GraphTraversal otherWay =  g.V(v2.getVertex()).outE().as("e").inV().has(ID, v1.getId()).select("e");
         return !oneWay.toList().isEmpty() || !otherWay.toList().isEmpty();

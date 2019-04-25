@@ -12,7 +12,7 @@ import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.Map;
 
-public class VertexStruct {
+public class VertexStructDb {
 
     private Vertex vertex;
     private int id;
@@ -20,7 +20,7 @@ public class VertexStruct {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 
 
-    public VertexStruct(int id, GraphTraversalSource g) {
+    public VertexStructDb(int id, GraphTraversalSource g) {
         this.id = id;
         this.vertex = getVertexAssociatedToId(id, g);
         if (this.vertex != null) this.exist = true;

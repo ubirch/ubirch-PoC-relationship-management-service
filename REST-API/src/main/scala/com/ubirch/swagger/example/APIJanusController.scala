@@ -53,6 +53,7 @@ class APIJanusController(implicit val swagger: Swagger) extends ScalatraServlet
     )
       )
 
+  //TODO : make this less ugly, easy to do, just need to take the time
   post("/addVertexToJG/:id1/:id2", operation(addToJanus)) {
     log.info("***** coucou1")
     println(params.get("properties1"))
@@ -119,13 +120,6 @@ class APIJanusController(implicit val swagger: Swagger) extends ScalatraServlet
 
     AddVertexes.addTwoVertexes( params("id1").toInt, truc1.asJava, params("id2").toInt, truc2.asJava, truc3.asJava )
 
-    /*    val truc = new CommunicationJanusgraph
-        params.get("properties1") match{
-          case Some(stuff) => AddVertexes.addTwoVertexes( params("id1").toInt, params.get("properties1").toMap(String, String), params("id2").toInt, params.get("properties2").get.toMap(String, String), params("propertiesEdge") )
-          //case Some(stuff) => truc.addVertex(params.get("name1").get, params("id1").toInt, params.get("name2").get, params("id2").toInt)
-          case None =>
-        }*/
-    "front end not implemented. To test it, check the corresponding test" // TODO : find a way to pass map as argument
   }
 
 
