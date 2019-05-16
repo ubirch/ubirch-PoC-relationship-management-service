@@ -14,9 +14,7 @@ class VertexStructDb(val id: String, val g: TraversalSource) {
 
   val Id: Key[String] = Key[String]("IdAssigned")
 
-  var vertex: ScalaVertex = {
-    g.V.has(Id, id).headOption().orNull
-  }
+  var vertex: ScalaVertex = g.V.has(Id, id).headOption().getOrElse(null)
 
   def exist: Boolean = if (vertex == null) false else true
 

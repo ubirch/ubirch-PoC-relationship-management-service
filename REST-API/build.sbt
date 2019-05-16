@@ -10,6 +10,7 @@ scalaVersion := "2.12.8"
 
 resolvers += Classpaths.typesafeReleases
 resolvers += Resolver.sonatypeRepo("releases")  // Or "snapshots"
+resolvers += Resolver.sonatypeRepo("snapshots")  // Or "snapshots"
 
 javaOptions ++= Seq(
   "-Xdebug",
@@ -33,7 +34,7 @@ libraryDependencies ++= Seq(
   "org.janusgraph" % "janusgraph-es" % "0.3.1",
   "org.apache.tinkerpop" % "gremlin-driver" % "3.3.3",
   "com.tinkerpop.gremlin" % "gremlin-java" % "2.6.0",
-  "com.ubirch" % "event-log-kafka" % "1.2.2"
+  "com.ubirch" % "event-log-kafka" % "1.2.3-SNAPSHOT"
 )
 
 enablePlugins(SbtTwirl)

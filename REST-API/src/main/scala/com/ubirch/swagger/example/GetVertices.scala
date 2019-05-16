@@ -123,7 +123,7 @@ object GetVertices {
   def toVertexStruct(v: Vertex): VertexStruct = {
     val label = gremlinConnector.g.V(v).label().toList().head
     val properties = gremlinConnector.g.V(v).valueMap.toList().head.asScala.toMap
-    val propertiesMap = properties map { x => x._1.toString -> x._2.asInstanceOf[util.ArrayList[String]].get(0) }
+    val propertiesMap = properties map { x => x._1.toString -> x._2.asInstanceOf[java.util.ArrayList[String]].get(0) }
     VertexStruct(label, propertiesMap)
   }
 }
