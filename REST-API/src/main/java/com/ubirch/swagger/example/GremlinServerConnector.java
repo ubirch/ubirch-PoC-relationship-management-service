@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 
-public class GremlinServerConnector {
+class GremlinServerConnector {
 
     private GraphTraversalSource g;
     private Graph graph;
@@ -18,7 +18,7 @@ public class GremlinServerConnector {
     private final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 
 
-    public GremlinServerConnector(){
+    GremlinServerConnector() {
         graph = EmptyGraph.instance();
         g = getTraversal(graph);
         b = Bindings.instance();
@@ -26,7 +26,7 @@ public class GremlinServerConnector {
 
     // initialisation and connection to server
 
-    public void closeConnection() {
+    void closeConnection() {
         try {
             g.close();
         } catch (Exception e) {
@@ -37,7 +37,7 @@ public class GremlinServerConnector {
         b = null;
     }
 
-    public GraphTraversalSource getTraversal(Graph graph){
+    private GraphTraversalSource getTraversal(Graph graph) {
         GraphTraversalSource g = null;
         try {
             g = graph.traversal().withRemote("configuration/remote-graph.properties");
@@ -47,15 +47,15 @@ public class GremlinServerConnector {
         return g;
     }
 
-    public Graph getGraph(){
+    Graph getGraph(){
         return this.graph;
     }
 
-    public GraphTraversalSource getTraversal(){
+    GraphTraversalSource getTraversal(){
         return this.g;
     }
 
-    public Bindings getBindings() {
+    Bindings getBindings() {
         return b;
     }
 }

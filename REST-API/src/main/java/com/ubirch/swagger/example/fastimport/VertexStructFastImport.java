@@ -1,6 +1,7 @@
-package com.ubirch.swagger.example.StructDB;
+package com.ubirch.swagger.example.fastimport;
 
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import com.ubirch.swagger.example.StructDB.VertexStructDb;
 import org.apache.tinkerpop.gremlin.process.traversal.Bindings;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -11,22 +12,22 @@ import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.Map;
 
-public class VertexStructDb {
+public class VertexStructFastImport {
 
     private Vertex vertex;
-    private int id;
+    private String id;
     private boolean exist = false;
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 
 
-    public VertexStructDb(int id, GraphTraversalSource g) {
+    public VertexStructFastImport(String id, GraphTraversalSource g, HashMap<String, String> properties, Bindings b, String label) {
         this.id = id;
-        this.vertex = getVertexAssociatedToId(id, g);
+        addVertex(properties, g, b, label);
         if (this.vertex != null) this.exist = true;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -36,26 +37,11 @@ public class VertexStructDb {
     }
 
 
-    // TODO: make this more versatile: replace ID with unique identifier
-    private static Vertex getVertexAssociatedToId(int id, GraphTraversalSource g){
-        String ID = "id";
-        Vertex truc = null;
-        try {
-            truc = g.V().hasLabel("benoit").has(ID, id).next();
-        } catch(Exception osef){
-            logger.info("vertex does not exist");
-            return null;
-        }
-
-        logger.info("The vertex with the label ID:" + Integer.toString(id) + " has the dabtabase id:" + truc.id().toString());
-        return truc;
-    }
-
-    public void addVertex(HashMap<String, String> properties, GraphTraversalSource g, Bindings b){
+    public void addVertex(HashMap<String, String> properties, GraphTraversalSource g, Bindings b, String label){
         if(exist) {
             throw new InstantiationError("Vertex already exist in the database");
         }
-        this.vertex = g.addV(b.of("label", "benoit")).property("id", b.of("id", id)).next();
+        this.vertex = g.addV(b.of("label", label)).property("keyy", b.of("keyy", id)).next();
 
         for (Map.Entry<String, String> entry : properties.entrySet()){
             GremlinPipeline pipe = new GremlinPipeline();
@@ -67,5 +53,4 @@ public class VertexStructDb {
     public Vertex getVertex(){
         return this.vertex;
     }
-
 }

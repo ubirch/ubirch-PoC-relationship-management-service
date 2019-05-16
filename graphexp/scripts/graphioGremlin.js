@@ -96,7 +96,7 @@ var graphioGremlin = (function(){
 		let search_type = $('#search_type').val();
 		//console.log(input_field)
 		var filtered_string = input_string;//You may add .replace(/\W+/g, ''); to refuse any character not in the alphabet
-		if (filtered_string.length>50) filtered_string = filtered_string.substring(0,50); // limit string length
+		if (filtered_string.length>100) filtered_string = filtered_string.substring(0,100); // limit string length
 		// Translate to Gremlin query
 		let has_str = "";
 		if (label_field !== "") {
@@ -114,6 +114,7 @@ var graphioGremlin = (function(){
 					break;
 				case "contains":
 					has_str += "textContains('" + filtered_string + "'))";
+					console.info("hasStr: " + has_str);
 					break;
 			}
 		} else if (limit_field === "" || limit_field < 0) {
@@ -121,13 +122,15 @@ var graphioGremlin = (function(){
 		}
 
 		let gremlin_query_nodes = "nodes = " + traversal_source + ".V()" + has_str;
+		console.log(has_str);
+
 		if (limit_field !== "" && isInt(limit_field) && limit_field > 0) {
 			gremlin_query_nodes += ".limit(" + limit_field + ").toList();";
 		} else {
 			gremlin_query_nodes += ".toList();";
 		}
 		let gremlin_query_edges = "edges = " + traversal_source + ".V(nodes).aggregate('node').outE().as('edge').inV().where(within('node')).select('edge').toList();";
-                let gremlin_query_edges_no_vars = "edges = " + traversal_source + ".V()"+has_str+".aggregate('node').outE().as('edge').inV().where(within('node')).select('edge').toList();";
+        let gremlin_query_edges_no_vars = "edges = " + traversal_source + ".V()"+has_str+".aggregate('node').outE().as('edge').inV().where(within('node')).select('edge').toList();";
                 //let gremlin_query_edges_no_vars = "edges = " + traversal_source + ".V()"+has_str+".bothE();";
 		let gremlin_query = gremlin_query_nodes + gremlin_query_edges + "[nodes,edges]";
 		console.log(gremlin_query);
@@ -482,40 +485,40 @@ var graphioGremlin = (function(){
 	}
 
 	function extract_infov3(data) {
-	var data_dic = {id:data.id, label:data.label, type:data.type, properties:{}}
-	var prop_dic = data.properties
-	//console.log(prop_dic)
-	for (var key in prop_dic) { 
-		if (prop_dic.hasOwnProperty(key)) {
-			if (data.type == 'vertex'){// Extracting the Vertexproperties (properties of properties for vertices)
-				var property = prop_dic[key];
-				property['summary'] = get_vertex_prop_in_list(prop_dic[key]).toString();
-			} else {
-				var property = prop_dic[key]['value'];
-			}
-			//property = property.toString();
-			data_dic.properties[key] = property;
-			// If  a node position is defined in the DB, the node will be positioned accordingly
-			// a value in fx and/or fy tells D3js to fix the position at this value in the layout
-			if (key == node_position_x) {
-				data_dic.fx = prop_dic[node_position_x]['0']['value'];
-			}
-			if (key == node_position_y) {
-				data_dic.fy = prop_dic[node_position_y]['0']['value'];
-			}
-		}
-	}
-	if (data.type=="edge"){
-		data_dic.source = data.outV;
-		data_dic.target = data.inV;
-		if (data.id !== null && typeof data.id === 'object'){
-			console.log('Warning the edge id is an object')
-			if ("relationId" in data.id){
-				data_dic.id = data.id.relationId;
+		var data_dic = {id:data.id, label:data.label, type:data.type, properties:{}}
+		var prop_dic = data.properties
+		//console.log(prop_dic)
+		for (var key in prop_dic) {
+			if (prop_dic.hasOwnProperty(key)) {
+				if (data.type == 'vertex'){// Extracting the Vertexproperties (properties of properties for vertices)
+					var property = prop_dic[key];
+					property['summary'] = get_vertex_prop_in_list(prop_dic[key]).toString();
+				} else {
+					var property = prop_dic[key]['value'];
+				}
+				//property = property.toString();
+				data_dic.properties[key] = property;
+				// If  a node position is defined in the DB, the node will be positioned accordingly
+				// a value in fx and/or fy tells D3js to fix the position at this value in the layout
+				if (key == node_position_x) {
+					data_dic.fx = prop_dic[node_position_x]['0']['value'];
+				}
+				if (key == node_position_y) {
+					data_dic.fy = prop_dic[node_position_y]['0']['value'];
+				}
 			}
 		}
-	}
-	return data_dic
+		if (data.type=="edge"){
+			data_dic.source = data.outV;
+			data_dic.target = data.inV;
+			if (data.id !== null && typeof data.id === 'object'){
+				//console.log('Warning the edge id is an object')
+				if ("relationId" in data.id){
+					data_dic.id = data.id.relationId;
+				}
+			}
+		}
+		return data_dic
 }
 
 function get_vertex_prop_in_list(vertexProperty){

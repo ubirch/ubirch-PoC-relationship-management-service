@@ -1,7 +1,7 @@
 package com.ubirch.swagger.example;
 
 import com.tinkerpop.gremlin.java.GremlinPipeline;
-import com.ubirch.swagger.example.Structure.VertexStruct;
+import com.ubirch.swagger.example.structure.VertexStruct;
 import org.apache.tinkerpop.gremlin.process.traversal.Bindings;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Graph;
@@ -73,7 +73,7 @@ public class GetVertexes {
         VertexStruct[] listVertexes = new VertexStruct[l.size()];
         for(Object s: list){
             // Intellij shows an error but it does compile normally
-            listVertexes[i] = new com.ubirch.swagger.example.Structure.VertexStruct(
+            listVertexes[i] = new com.ubirch.swagger.example.structure.VertexStruct(
                     "transaction",
                     JavaConverters.mapAsScalaMapConverter(list.get(i)).asScala().toMap(Predef.conforms())
                     );
@@ -108,7 +108,7 @@ public class GetVertexes {
                 entry -> (String) entry.getKey(),
                 entry ->  entry.getValue().toString()));
 
-        VertexStruct v = new com.ubirch.swagger.example.Structure.VertexStruct(
+        VertexStruct v = new com.ubirch.swagger.example.structure.VertexStruct(
                 "transaction",
                 JavaConverters.mapAsScalaMapConverter(stuff).asScala().toMap(Predef.conforms())
                 );
@@ -143,7 +143,7 @@ public class GetVertexes {
                 entry -> (String) entry.getKey(),
                 entry ->  entry.getValue().toString()));
 
-        VertexStruct v = new com.ubirch.swagger.example.Structure.VertexStruct(
+        VertexStruct v = new com.ubirch.swagger.example.structure.VertexStruct(
                 "transaction",
                 JavaConverters.mapAsScalaMapConverter(stuff).asScala().toMap(Predef.conforms())
         );

@@ -69,8 +69,6 @@ public class AddVertexes {
             default: break;
         }
 
-        logger.info("coucou");
-
         sCon.closeConnection();
 
         return "OKI DOKI";
@@ -114,11 +112,10 @@ public class AddVertexes {
      * @param propEdge properties of the edge
      */
     private static void oneExist(VertexStructDb v1, HashMap<String, String> p1, VertexStructDb v2, HashMap<String, String> p2, HashMap<String, String> propEdge) {
-        assert (v1.exist() || v2.exist()): "should not happen";
         if(v1.exist()){
             v2.addVertex(p2, g, b);
             createEdge(v1, v2, propEdge);
-        } else{
+        } else {
             v1.addVertex(p1, g, b);
             createEdge(v1, v2, propEdge);
         }

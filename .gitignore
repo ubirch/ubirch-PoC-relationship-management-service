@@ -1,5 +1,12 @@
+REST-API/.idea
+.DS_Store
+.*/
+*.idea/
 ScalaConnectionServerTest/
-
+REST-API/.idea/
+REST-API/project/target/
+REST-API/target/
+graphexp/.idea
 # Compiled class file
 *.class
 *.cache

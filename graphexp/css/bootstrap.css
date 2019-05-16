@@ -69,7 +69,7 @@ body {
   color: #212529;
   text-align: left;
   background-color: #fff;
-  background-image: url('../images/ticks.png');
+  background-image: url('../images/total_white.png'); /*background. Original: ticks.png*/
 }
 
 [tabindex="-1"]:focus {

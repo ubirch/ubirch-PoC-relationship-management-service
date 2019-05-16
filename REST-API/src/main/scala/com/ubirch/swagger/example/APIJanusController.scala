@@ -1,23 +1,20 @@
 package com.ubirch.swagger.example
 
-import com.ubirch.swagger.example.Structure.VertexStruct
-import com.ubirch.swagger.example.Utils.Util
+import com.ubirch.swagger.example.structure.VertexStruct
+import com.ubirch.swagger.example.util.Util.arrayVertexToJson
+import gremlin.scala.{Key, KeyValue}
 import org.json4s.JsonAST.JNothing
+import org.json4s.jackson.Serialization
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra.json.NativeJsonSupport
-import org.scalatra.swagger.{ResponseMessage, Swagger, SwaggerSupport}
-import org.scalatra.{CorsSupport, MultiParams, ScalatraServlet}
+import org.scalatra.swagger.{ResponseMessage, Swagger, SwaggerSupport, SwaggerSupportSyntax}
+import org.scalatra.{CorsSupport, ScalatraServlet}
 import org.slf4j.{Logger, LoggerFactory}
-import scala.collection.JavaConverters._
-
-import scala.collection.immutable.HashMap
-import scala.collection.mutable
 
 class APIJanusController(implicit val swagger: Swagger) extends ScalatraServlet
   with NativeJsonSupport with SwaggerSupport with CorsSupport {
 
   def log : Logger = LoggerFactory.getLogger(this.getClass)
-  def ut : Util = new Util
 
   // Allows CORS support to display the swagger UI when using the same network
   options("/*") {
@@ -39,91 +36,59 @@ class APIJanusController(implicit val swagger: Swagger) extends ScalatraServlet
   }
 
 
-  val addToJanus =
+  val addToJanus: SwaggerSupportSyntax.OperationBuilder =
     (apiOperation[addVertex]("addToJanusTwoVertexes")
       summary "Add two to JanusGraph"
       schemes "http" // Force swagger ui to use http instead of https, only need to say it once
       description "Still not implemented. Does not work right now as it should now support dynamic properties addition"
       parameters(
       pathParam[Int]("id1").description("id of the first vertex"),
-      queryParam[Option[Map[String, String]]]("properties1").description("Properties of the second vertex"),
+      queryParam[Option[Map[String, String]]]("properties1").
+        description("Properties of the second vertex"),
       pathParam[Int]("id2").description("id of the second vertex"),
-      queryParam[Option[Map[String, String]]]("properties2").description("Properties of the second vertex"),
-      queryParam[Option[Map[String, String]]]("propertiesEdge").description("Properties of the edge that link the two vertexes")
+      queryParam[Option[Map[String, String]]]("properties2").
+        description("Properties of the second vertex"),
+      queryParam[Option[Map[String, String]]]("propertiesEdge").
+        description("Properties of the edge that link the two vertexes")
     )
       )
 
-  //TODO : make this less ugly, easy to do, just need to take the time
   post("/addVertexToJG/:id1/:id2", operation(addToJanus)) {
-    log.info("***** coucou1")
     println(params.get("properties1"))
-    var prop1: String = null
-    params.get("properties1") match {
-      case Some(stuff) => prop1 = stuff
-      case None => prop1= ""
+
+
+
+    def propertiesToKeyValuesList(propName: String): List[KeyValue[String]] = {
+
+      def extractMapFromString(propName: String): Map[String, String] = {
+        val properties = params.getOrElse(propName, "")
+        val jValue = parse(properties)
+
+        if(jValue == JNothing) {
+          Map.empty[String, String]
+        } else {
+          log.info(jValue.extract[Map[String, String]].mkString(", "))
+          jValue.extract[Map[String, String]]
+        }
+
+      }
+
+      extractMapFromString(propName) map { x => KeyValue(Key(x._1), x._2)} toList
+
     }
-    println("prop1: " + prop1)
 
-    val jValue1 = parse(prop1)
-    println("jvalue: " + jValue1.toString)
-    var truc1: Map[String, String] = null
-    if(jValue1 == JNothing){
-      truc1 = Map.empty[String, String]
-    } else {
-      truc1 = jValue1.extract[Map[String, String]]
-    }
-    val hashmap1 = truc1
-    println(truc1)
+    val prop1 = propertiesToKeyValuesList("properties1")
+    val prop2 = propertiesToKeyValuesList("properties2")
+    val propE = propertiesToKeyValuesList("propertiesEdge")
+    val id1 = params("id1")
+    val id2 = params("id2")
 
-
-
-    var prop2: String = null
-    params.get("properties2") match {
-      case Some(stuff) => prop2 = stuff
-      case None => prop2= ""
-    }
-    println("prop2: " + prop2)
-
-    val jValue2 = parse(prop2)
-    println("jvalue: " + jValue2.toString)
-    var truc2: Map[String, String] = null
-    if(jValue2 == JNothing){
-      truc2 = Map.empty[String, String]
-    } else {
-      truc2 = jValue2.extract[Map[String, String]]
-    }
-    val hashmap2 = truc2
-    println(truc2)
-
-
-
-
-    var prop3: String = null
-    params.get("propertiesEdge") match {
-      case Some(stuff) => prop3 = stuff
-      case None => prop3= ""
-    }
-    println("prop3: " + prop3)
-
-    val jValue3 = parse(prop3)
-    println("jvalue: " + jValue3.toString)
-    var truc3: Map[String, String] = null
-    if(jValue3 == JNothing){
-      truc3 = Map.empty[String, String]
-    } else {
-      truc3 = jValue3.extract[Map[String, String]]
-    }
-    val hashmap3 = truc3
-    println(truc3)
-
-
-
-    AddVertexes.addTwoVertexes( params("id1").toInt, truc1.asJava, params("id2").toInt, truc2.asJava, truc3.asJava )
+    AddVertices.addTwoVertices(id1, prop1, id2, prop2, propE)
 
   }
 
 
-  val getVertexesJanusGraph =
+  val getVertexesJanusGraph: SwaggerSupportSyntax.OperationBuilder =
     (apiOperation[List[VertexStruct]]("getVertexesJanusGraph")
       summary "Display informations about a Vertex"
       description "Display informations about a Vertex (ID and properties)." +
@@ -133,29 +98,26 @@ class APIJanusController(implicit val swagger: Swagger) extends ScalatraServlet
       )
 
   get("/getVertexe", operation(getVertexesJanusGraph)) {
-    val truc = new CommunicationJanusgraph
-    log.info("coucou")
     params.get("id") match {
-      case Some(id) =>{
-        val vertex = GetVertexes.getVertexById(id.toInt);
+      case Some(id) =>
+        val vertex = GetVertices.getVertexByPublicId(id)
         if(vertex == null){
           halt(404,  s"404: Can't find vertex with the ID: $id")
         } else{
           vertex.toJson
         }
-      }
       case None =>
-        val listVertexes = GetVertexes.getAllVertexes(100);
-        ut.arrayVertexToJson(listVertexes)
+        val listVertexes = GetVertices.getAllVertices(100)
+        arrayVertexToJson(listVertexes.toArray)
     }
   }
 
 
-  val getVertexesWithDepth =
+  val getVertexesWithDepth: SwaggerSupportSyntax.OperationBuilder =
     (apiOperation[List[vertexWithDepth]]("getVertexesWithDepth")
       summary "Get a vertex and the surrounding ones"
       description "see summary"
-      parameter queryParam[Int]("id").description("Id of the vertex we're looking for")
+      parameter queryParam[String]("id").description("Id of the vertex we're looking for")
       parameter queryParam[Int]("depth").description("Depth of what we're looking for")
 
       responseMessage ResponseMessage(404, "404: Can't find edge with the ID: idNumber")
@@ -163,15 +125,12 @@ class APIJanusController(implicit val swagger: Swagger) extends ScalatraServlet
 
 
   get("/getVertexesDepth", operation(getVertexesWithDepth)) {
-    val truc = new CommunicationJanusgraph
-    log.info("coucou")
 
-
-    val neighbors = GetVertexes.getVertexIdDepth(params.get("id").get.toInt, params.get("depth").get.toInt);
+    val neighbors = GetVertices.getVertexDepth(params.get("id").get, params.get("depth").get.toInt)
     if(neighbors == null){
       halt(404,  s"404: Can't find vertex with the provided ID")
     } else{
-      ut.reformatNeighboor(neighbors)
+      Serialization.write(neighbors)
     }
 
 

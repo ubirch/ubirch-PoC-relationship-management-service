@@ -1,5 +1,5 @@
 .edge {
-  stroke: #999;
+  stroke: #464646; /*default: #999*/
   stroke-opacity: 0.8;
 }
 

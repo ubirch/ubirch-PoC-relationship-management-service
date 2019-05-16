@@ -1,7 +1,7 @@
 package com.ubirch.swagger.example
 
-import com.ubirch.swagger.example.Structure.VertexStruct
-import com.ubirch.swagger.example.Utils.Util
+import com.ubirch.swagger.example.structure.VertexStruct
+import com.ubirch.swagger.example.util.Util
 import org.slf4j.{Logger, LoggerFactory}
 
 object UtilTest {
