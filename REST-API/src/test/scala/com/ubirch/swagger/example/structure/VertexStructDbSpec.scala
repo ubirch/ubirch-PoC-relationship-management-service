@@ -44,7 +44,7 @@ class VertexStructDbSpec extends FeatureSpec with Matchers {
         new KeyValue[String](Name, "aName"),
         new KeyValue[String](Created, dateTimeFormat.print(now))
       )
-      vSDb.addVertex(properties, "aLabel", graph, b)
+      vSDb.addVertex(properties, "aLabel", b)
 
       val response = vSDb.getPropertiesMap//g.V(vSDb.getVertex.id).valueMap.toList().head.asScala.toMap.asInstanceOf[Map[Any, util.ArrayList[Any]]]
       val label = vSDb.vertex.label

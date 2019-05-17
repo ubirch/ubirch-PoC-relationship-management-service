@@ -32,6 +32,7 @@ object GetVertices {
       }
     }
     val accuInit: List[VertexStruct] = Nil
+    gremlinConnector.closeConnection()
     toVertexStructList(listVertexes, accuInit)
   }
 
@@ -87,6 +88,7 @@ object GetVertices {
     val v: Vertex = gremlinConnector.g.V().has(ID, idAssigned).toList().head
     val idDeparture = v.id.toString
     val map: Map[Int, Int] = getAllNeighborsDistance(idDeparture.toInt, depth)
+    gremlinConnector.closeConnection()
     map.groupBy(_._2).mapValues(_.keys)
   }
 

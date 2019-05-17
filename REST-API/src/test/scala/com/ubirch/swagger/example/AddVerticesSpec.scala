@@ -1,21 +1,17 @@
 package com.ubirch.swagger.example
 
-import com.ubirch.swagger.example.structure.VertexStructDb
 import com.ubirch.swagger.example.Util.extractValue
+import com.ubirch.swagger.example.structure.VertexStructDb
 import gremlin.scala._
-import org.apache.tinkerpop.gremlin.structure.util.empty.EmptyGraph
 import org.joda.time.format.ISODateTimeFormat
 import org.joda.time.{DateTime, DateTimeZone}
 import org.scalatest.{FeatureSpec, Matchers}
 import org.slf4j.{Logger, LoggerFactory}
 
 
-
 class AddVerticesSpec extends FeatureSpec with Matchers {
 
-  implicit val graph: ScalaGraph = EmptyGraph.instance.asScala.configure(_.withRemote("configuration/remote-graph.properties"))
-  val g: TraversalSource = graph.traversal //graph.traversal.withRemote("configuration/remote-graph.properties")
-
+  val gc: GremlinConnector = new GremlinConnector
   private val dateTimeFormat = ISODateTimeFormat.dateTime()
 
   val Number: Key[String] = Key[String]("number")
@@ -26,7 +22,7 @@ class AddVerticesSpec extends FeatureSpec with Matchers {
   def log: Logger = LoggerFactory.getLogger(this.getClass)
 
   def deleteDatabase(): Unit = {
-    g.V().drop().iterate()
+    gc.g.V().drop().iterate()
   }
 
   feature("add vertices") {
@@ -60,9 +56,8 @@ class AddVerticesSpec extends FeatureSpec with Matchers {
       AddVertices.addTwoVertices(id1.toString, p1, id2.toString, p2, pE)
 
       // analyse
-      val v1Reconstructed = new VertexStructDb(id1.toString, g)
-      val v2Reconstructed = new VertexStructDb(id2.toString, g)
-      log.info(v1Reconstructed.vertex.id.toString)
+      val v1Reconstructed = new VertexStructDb(id1.toString, gc.g)
+      val v2Reconstructed = new VertexStructDb(id2.toString, gc.g)
 
       val response1 = v1Reconstructed.getPropertiesMap
       val idGottenBack1 = extractValue[String](response1, IdAssigned.name)
@@ -85,7 +80,6 @@ class AddVerticesSpec extends FeatureSpec with Matchers {
       new KeyValue[String](Name, nameGottenBack2),
       new KeyValue[String](Created, createdGottenBack2),
       )
-
 
       propertiesReceived1 shouldBe p1
       propertiesReceived2 shouldBe p2

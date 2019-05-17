@@ -21,10 +21,6 @@ import java.util.stream.Collectors;
 
 public class GetVertexes {
 
-    private static int depth;
-    private static int idPublic;
-    private static int idDatabase;
-
     private static GraphTraversalSource g;
     private static Graph graph;
     private static Bindings b;
