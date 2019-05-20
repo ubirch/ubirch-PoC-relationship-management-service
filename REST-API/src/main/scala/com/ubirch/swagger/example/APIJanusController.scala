@@ -14,7 +14,7 @@ import org.slf4j.{Logger, LoggerFactory}
 class APIJanusController(implicit val swagger: Swagger) extends ScalatraServlet
   with NativeJsonSupport with SwaggerSupport with CorsSupport {
 
-  def log : Logger = LoggerFactory.getLogger(this.getClass)
+  def log: Logger = LoggerFactory.getLogger(this.getClass)
 
   // Allows CORS support to display the swagger UI when using the same network
   options("/*") {
@@ -50,12 +50,11 @@ class APIJanusController(implicit val swagger: Swagger) extends ScalatraServlet
         description("Properties of the second vertex"),
       queryParam[Option[Map[String, String]]]("propertiesEdge").
         description("Properties of the edge that link the two vertexes")
-    )
       )
+    )
 
   post("/addVertexToJG/:id1/:id2", operation(addToJanus)) {
     println(params.get("properties1"))
-
 
 
     def propertiesToKeyValuesList(propName: String): List[KeyValue[String]] = {
@@ -64,7 +63,7 @@ class APIJanusController(implicit val swagger: Swagger) extends ScalatraServlet
         val properties = params.getOrElse(propName, "")
         val jValue = parse(properties)
 
-        if(jValue == JNothing) {
+        if (jValue == JNothing) {
           Map.empty[String, String]
         } else {
           log.info(jValue.extract[Map[String, String]].mkString(", "))
@@ -72,9 +71,7 @@ class APIJanusController(implicit val swagger: Swagger) extends ScalatraServlet
         }
 
       }
-
-      extractMapFromString(propName) map { x => KeyValue(Key(x._1), x._2)} toList
-
+      extractMapFromString(propName) map { x => KeyValue(Key(x._1), x._2) } toList
     }
 
     val prop1 = propertiesToKeyValuesList("properties1")
@@ -82,9 +79,10 @@ class APIJanusController(implicit val swagger: Swagger) extends ScalatraServlet
     val propE = propertiesToKeyValuesList("propertiesEdge")
     val id1 = params("id1")
     val id2 = params("id2")
-
-    AddVertices.addTwoVertices(id1, prop1, id2, prop2, propE)
-
+    implicit val gc: GremlinConnector = new GremlinConnector
+    val res = new AddVertices().addTwoVertices(id1, prop1, id2, prop2, propE)
+    gc.closeConnection()
+    res
   }
 
 
@@ -92,7 +90,7 @@ class APIJanusController(implicit val swagger: Swagger) extends ScalatraServlet
     (apiOperation[List[VertexStruct]]("getVertexesJanusGraph")
       summary "Display informations about a Vertex"
       description "Display informations about a Vertex (ID and properties)." +
-                  "Not providing an ID will display the entire database"
+      "Not providing an ID will display the entire database"
       parameter queryParam[Option[Int]]("id").description("Id of the vertex we're looking for")
       responseMessage ResponseMessage(404, "404: Can't find edge with the given ID")
       )
@@ -101,9 +99,9 @@ class APIJanusController(implicit val swagger: Swagger) extends ScalatraServlet
     params.get("id") match {
       case Some(id) =>
         val vertex = GetVertices.getVertexByPublicId(id)
-        if(vertex == null){
-          halt(404,  s"404: Can't find vertex with the ID: $id")
-        } else{
+        if (vertex == null) {
+          halt(404, s"404: Can't find vertex with the ID: $id")
+        } else {
           vertex.toJson
         }
       case None =>
@@ -127,9 +125,9 @@ class APIJanusController(implicit val swagger: Swagger) extends ScalatraServlet
   get("/getVertexesDepth", operation(getVertexesWithDepth)) {
 
     val neighbors = GetVertices.getVertexDepth(params.get("id").get, params.get("depth").get.toInt)
-    if(neighbors == null){
-      halt(404,  s"404: Can't find vertex with the provided ID")
-    } else{
+    if (neighbors == null) {
+      halt(404, s"404: Can't find vertex with the provided ID")
+    } else {
       Serialization.write(neighbors)
     }
 
@@ -140,6 +138,9 @@ class APIJanusController(implicit val swagger: Swagger) extends ScalatraServlet
 }
 
 case class properties(map: Map[String, String])
+
 case class vertexWithDepth(distance: Array[Integer])
+
 case class neighbor(neighborId: Integer)
+
 case class addVertex(id1: Int, properties1: Map[String, String], id2: Integer, properties2: Map[String, String], propertiesEdge: Map[String, String])

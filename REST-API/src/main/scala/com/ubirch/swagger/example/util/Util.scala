@@ -16,6 +16,7 @@ object Util {
     implicit def vertexes2JValue(v: VertexStruct): JsonAST.JObject = {
       ("label" -> v.label) ~ ("properties" -> v.properties)
     }
+
     val json = "list of vertexes" -> reformatArrayVertex(arrayVertexes).toList
     implicit val formats: DefaultFormats.type = org.json4s.DefaultFormats
 
@@ -26,11 +27,11 @@ object Util {
   def reformatArrayVertex(arrayVertex: Array[VertexStruct]): Array[VertexStruct] = {
     val arrayVertexReformated: Array[VertexStruct] = new Array(arrayVertex.length)
     var i = 0
-    for(v <- arrayVertex){
+    for (v <- arrayVertex) {
       val label = v.label
       val properties: Map[String, String] = v.properties
       var propertiesReformated: Map[String, String] = Map()
-      for((key, value) <- properties) propertiesReformated += (key.toString -> value.toString.substring(1, value.length - 1))
+      for ((key, value) <- properties) propertiesReformated += (key.toString -> value.toString.substring(1, value.length - 1))
 
       val vertexReformated: VertexStruct = VertexStruct(label, propertiesReformated)
 

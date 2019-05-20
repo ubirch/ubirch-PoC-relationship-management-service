@@ -47,11 +47,11 @@ class GremlinServerConnector {
         return g;
     }
 
-    Graph getGraph(){
+    Graph getGraph() {
         return this.graph;
     }
 
-    GraphTraversalSource getTraversal(){
+    GraphTraversalSource getTraversal() {
         return this.g;
     }
 

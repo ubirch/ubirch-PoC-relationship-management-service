@@ -3,16 +3,16 @@ package com.ubirch.swagger.example.kafka.consumer
 import java.util.UUID
 
 import com.ubirch.kafka.consumer.{Configs, ConsumerRecordsController, ProcessResult, StringConsumer, WithMetrics}
-import com.ubirch.swagger.example.AddVertices
+import com.ubirch.swagger.example.{AddVertices, GremlinConnector}
 import gremlin.scala.{Key, KeyValue}
 import org.apache.kafka.clients.consumer.{ConsumerRecord, OffsetResetStrategy}
 import org.apache.kafka.common.serialization.StringDeserializer
-import org.slf4j.{Logger, LoggerFactory}
 import org.json4s._
 import org.json4s.native.JsonMethods._
+import org.slf4j.{Logger, LoggerFactory}
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Future, Promise}
+import scala.concurrent.Future
 
 object StringConsumer extends App {
 
@@ -80,11 +80,41 @@ object StringConsumer extends App {
   }
 
   case class AddV(v1: Vertounet, v2: Vertounet, edge: Edgounet)
+
   case class Vertounet(id: String, properties: Map[String, String])
+
   case class Edgounet(properties: Map[String, String])
 
-  def mapToListKeyValues(propMaps: Map[String, String]): List[KeyValue[String]] =  propMaps map { x => KeyValue(Key(x._1), x._2)} toList
+  def mapToListKeyValues(propMaps: Map[String, String]): List[KeyValue[String]] = propMaps map { x => KeyValue(Key(x._1), x._2) } toList
 
+  implicit val gc: GremlinConnector = new GremlinConnector
+
+  /**
+    * Entry should be formatted as the following:
+    * {"v1":{
+    *   "id": "ID"
+    *   "properties": {
+    *     "prop1Name": "prop1Value",
+    *     ...
+    *     "propNName": "propNValue"
+    *   }
+    *  "v2":{
+    *   "id": "ID"
+    *   "properties": {
+    *     "prop1Name": "prop1Value",
+    *     ...
+    *     "propNName": "propNValue"
+    *   }
+    *  "edge":{
+    *    "properties":{
+    *     "prop1Name": "prop1Value",
+    *     ...
+    *     "propNName": "propNValue"
+    *}}}
+    *
+    * @param req The parsed JSON
+    * @return
+    */
   def addVertices(req: JValue) = {
     implicit val formats: DefaultFormats.type = DefaultFormats
     val addVertexounet = req.extract[AddV]
@@ -93,12 +123,12 @@ object StringConsumer extends App {
     val id2 = addVertexounet.v2.id
     val p2 = mapToListKeyValues(addVertexounet.v1.properties)
     val pE = mapToListKeyValues(addVertexounet.edge.properties)
-    /*        log.info("id1: " + id1)
-            log.info("p1: " + p1.mkString(", "))
-            log.info("id2: " + id2)
-            log.info("p2: " + p2.mkString(", "))
-            log.info("pE: " + pE.mkString(", "))*/
-    AddVertices.addTwoVertices(id1, p1, id2, p2, pE)
+    new AddVertices().addTwoVertices(id1, p1, id2, p2, pE)
+  }
+
+  def getVertices(req: JValue): Unit = {
+    implicit val formats: DefaultFormats.type = DefaultFormats
+
   }
 
 }

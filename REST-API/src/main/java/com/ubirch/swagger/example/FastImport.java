@@ -22,16 +22,16 @@ public class FastImport {
     private static final String ID = "keyy";
     private static final String OUT_V = "outV";
     private static final String IN_V = "inV";
-    private static final ArrayList<String> LIST_NAME_BLOCKCHAIN = new ArrayList<String>(
+    private static final ArrayList<String> LIST_NAME_BLOCKCHAIN = new ArrayList<>(
             Arrays.asList("blockchain_tx_id", "ETHEREUM_TESTNET_RINKEBY_TESTNET_NETWORK")
     );
-    private static final ArrayList<String> LIST_NAME_TREE = new ArrayList<String>(
+    private static final ArrayList<String> LIST_NAME_TREE = new ArrayList<>(
             Arrays.asList("slave-tree-id")
     );
-    private static final ArrayList<String> LIST_NAME_DEVICEID = new ArrayList<String>(
+    private static final ArrayList<String> LIST_NAME_DEVICEID = new ArrayList<>(
             Arrays.asList("device-id")
     );
-    private static String[] libeles = {"value" , "category", "name", "key"};
+    private static String[] libeles = {"value", "category", "name", "key"};
     private static int VALUE = 0;
     private static int CATEGORY = 1;
     private static int NAME = 2;
@@ -82,7 +82,7 @@ public class FastImport {
                 data = line.split(csvSplitBy);
 
                 System.out.println("Data [" + libeles[0] + "= " + data[0] +
-                        " , "+ libeles[1] + "=" + data[1] + " , " + libeles[2] +
+                        " , " + libeles[1] + "=" + data[1] + " , " + libeles[2] +
                         "=" + data[2] + " , " + libeles[3] + "=" + data[3] + "]");
                 HashMap<String, String> pTo = new HashMap<>();
                 HashMap<String, String> pFrom = new HashMap<>();
@@ -129,11 +129,12 @@ public class FastImport {
 
     /**
      * If no vertex have been initialised
-     * @param id1 Id of the first vertex
-     * @param pTo Map containing the properties of the first vertex.
-     * @param id2 Id of the second vertex.
+     *
+     * @param id1   Id of the first vertex
+     * @param pTo   Map containing the properties of the first vertex.
+     * @param id2   Id of the second vertex.
      * @param pFrom Map containing the properties of the second vertex.
-     * @param e Map contining the properties of the edge.
+     * @param e     Map contining the properties of the edge.
      */
     private static void case0(String id1, HashMap<String, String> pTo, String id2, HashMap<String, String> pFrom, HashMap<String, String> e) {
         logger.info("case0");
@@ -146,11 +147,12 @@ public class FastImport {
 
     /**
      * If only one vertex has been initialised.
-     * @param id1 Id of the first vertex.
-     * @param pTo Map containing the properties of the first vertex.
-     * @param id2 Id of the second vertex.
+     *
+     * @param id1   Id of the first vertex.
+     * @param pTo   Map containing the properties of the first vertex.
+     * @param id2   Id of the second vertex.
      * @param pFrom Map containing the properties of the second vertex.
-     * @param e HashMap containing the properties of the edge.
+     * @param e     HashMap containing the properties of the edge.
      */
     private static void case1(String id1, HashMap<String, String> pTo, String id2, HashMap<String, String> pFrom, HashMap<String, String> e) {
         if (listV.containsKey(id1)) { //first one
@@ -166,9 +168,10 @@ public class FastImport {
 
     /**
      * If the two vertices have already been initialised.
+     *
      * @param id1 Id of the first vertex.
      * @param id2 Id of the second vertex.
-     * @param e HashMap containing the properties of the edge.
+     * @param e   HashMap containing the properties of the edge.
      */
     private static void case2(String id1, String id2, HashMap<String, String> e) {
         logger.info("case2");
@@ -178,6 +181,7 @@ public class FastImport {
 
     /**
      * Determine the label of one vertex depending on its link.
+     *
      * @return type of label.
      */
     private static String getLabelFrom() {
@@ -189,6 +193,7 @@ public class FastImport {
 
     /**
      * Determine the label of a vertex depending on its link.
+     *
      * @return type of label.
      */
     private static String getLabelTo() {
@@ -206,6 +211,7 @@ public class FastImport {
 
     /**
      * Determine how many vertices have already been initialised.
+     *
      * @param id1 The id of the first vertex.
      * @param id2 The id of the second vertex.
      * @return An int (0, 1, 2) representing how many vertices have been initialised.
@@ -219,8 +225,9 @@ public class FastImport {
 
     /**
      * Create an edge between two vertices.
+     *
      * @param vertexFrom Vertex where the edge will go.
-     * @param vertexTo Vertex from where the edge starts.
+     * @param vertexTo   Vertex from where the edge starts.
      * @param properties Map containing the properties of the edge.
      */
     protected static void createEdge(VertexStructFastImport vertexFrom, VertexStructFastImport vertexTo, HashMap<String, String> properties) {

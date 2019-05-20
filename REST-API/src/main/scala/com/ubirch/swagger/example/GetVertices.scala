@@ -15,6 +15,7 @@ object GetVertices {
 
   /**
     * Returns a fixed amount of (randomly selected) vertices.
+    *
     * @param limit number of random vertices to be returned.
     * @return a list of VertexStruct
     */
@@ -31,6 +32,7 @@ object GetVertices {
           toVertexStructList(xs, vStruct :: accu)
       }
     }
+
     val accuInit: List[VertexStruct] = Nil
     gremlinConnector.closeConnection()
     toVertexStructList(listVertexes, accuInit)
@@ -40,8 +42,9 @@ object GetVertices {
     * Get all the vertex linked to one up to a certain depth.
     * Does not take into account the direction of the edge
     * For example, for (A -> B -> C) and (A -> B <- C), A and C are always separated by a distance of 2
-    * @param idAssigned    the (public) id of the vertex
-    * @param depth the depth of the link between the starting and ending poitn
+    *
+    * @param idAssigned the (public) id of the vertex
+    * @param depth      the depth of the link between the starting and ending poitn
     * @return
     */
   def getVertexDepth(idAssigned: String, depth: Int): Map[Int, Iterable[Int]] = {
@@ -56,12 +59,14 @@ object GetVertices {
           val truc = accu map {
             x => neighboorsOfAVertex(x._1, accu, counter)
           }
+
           def concatenante(accu: Map[Int, Int], toConc: Iterable[Map[Int, Int]]): Map[Int, Int] = {
             toConc match {
               case Nil => accu
               case x :: xs => concatenante(x ++ accu, xs)
             }
           }
+
           lookForNeighbors(counter + 1, depthMax, concatenante(Map.empty[Int, Int], truc))
         }
       }
@@ -69,7 +74,8 @@ object GetVertices {
       def neighboorsOfAVertex(idDb: Int, mapExistingVertices: Map[Int, Int], distance: Int): Map[Int, Int] = {
         val vertices: List[Vertex] = gremlinConnector.g.V(idDb).both.toList()
         val listIdVertices: List[Int] = vertices map { x => x.id().toString.toInt }
-        def addIfNotIn(mapExistingVertices: Map[Int, Int], listIdVertices: List[Int]) : Map[Int, Int]= {
+
+        def addIfNotIn(mapExistingVertices: Map[Int, Int], listIdVertices: List[Int]): Map[Int, Int] = {
           listIdVertices match {
             case Nil => mapExistingVertices
             case x :: xs =>
@@ -78,6 +84,7 @@ object GetVertices {
               } else addIfNotIn(mapExistingVertices + (x -> distance), xs)
           }
         }
+
         addIfNotIn(mapExistingVertices, listIdVertices)
       }
 
@@ -93,32 +100,34 @@ object GetVertices {
   }
 
 
-
   /**
     * Return a vertex based on its (public) id.
+    *
     * @param idAssigned the public id of the vertex.
     * @return a VertexStructDb containing informations about the vertex.
     */
   def getVertexByPublicId(idAssigned: String): VertexStruct = {
     val kv = new KeyValue[String](ID, idAssigned)
     val v: Vertex = gremlinConnector.g.V.has(kv).toList().head
-    if(v == null)  null
+    if (v == null) null
     toVertexStruct(v)
   }
 
   /**
     * Get a vertex based on their (private) id.
+    *
     * @param idDb the (private) id of the vertex.
     * @return a VertexStructDb containing informations about the vertex.
     */
   def getVertexByDbId(idDb: Int): VertexStruct = {
     val v: Vertex = gremlinConnector.g.V(idDb).toList().head
-    if(v == null) null
+    if (v == null) null
     toVertexStruct(v)
   }
 
   /**
     * Covnert a vertex to a vertexStruct.
+    *
     * @param v The vertex that will be converted.
     * @return a VertexStruct of the vertex.
     */

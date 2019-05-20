@@ -11,7 +11,7 @@ case class VertexStruct(label: String, properties: Map[String, String]) {
 
   override def toString: String = {
     var s: String = s"Label: $label"
-    for( (k,v) <- properties) {
+    for ((k, v) <- properties) {
       log.info("k: " + k)
       s += s"\n$k: ${v.toString}"
       log.info("end")
@@ -19,7 +19,7 @@ case class VertexStruct(label: String, properties: Map[String, String]) {
     s
   }
 
-  def toJson: String ={
+  def toJson: String = {
     val json = ("label" -> this.label) ~ ("properties" -> properties)
     compact(render(json))
   }

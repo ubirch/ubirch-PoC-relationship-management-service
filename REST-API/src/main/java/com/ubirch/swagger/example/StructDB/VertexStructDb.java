@@ -37,12 +37,12 @@ public class VertexStructDb {
 
 
     // TODO: make this more versatile: replace ID with unique identifier
-    private static Vertex getVertexAssociatedToId(int id, GraphTraversalSource g){
+    private static Vertex getVertexAssociatedToId(int id, GraphTraversalSource g) {
         String ID = "id";
         Vertex truc = null;
         try {
             truc = g.V().hasLabel("benoit").has(ID, id).next();
-        } catch(Exception osef){
+        } catch (Exception osef) {
             logger.info("vertex does not exist");
             return null;
         }
@@ -51,20 +51,20 @@ public class VertexStructDb {
         return truc;
     }
 
-    public void addVertex(HashMap<String, String> properties, GraphTraversalSource g, Bindings b){
-        if(exist) {
+    public void addVertex(HashMap<String, String> properties, GraphTraversalSource g, Bindings b) {
+        if (exist) {
             throw new InstantiationError("Vertex already exist in the database");
         }
         this.vertex = g.addV(b.of("label", "benoit")).property("id", b.of("id", id)).next();
 
-        for (Map.Entry<String, String> entry : properties.entrySet()){
+        for (Map.Entry<String, String> entry : properties.entrySet()) {
             GremlinPipeline pipe = new GremlinPipeline();
             pipe.start(g.V(this.vertex.id()).property(entry.getKey(), b.of(entry.getKey(), entry.getValue())).next());
         }
 
     }
 
-    public Vertex getVertex(){
+    public Vertex getVertex() {
         return this.vertex;
     }
 

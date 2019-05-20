@@ -1,36 +1,38 @@
 package com.ubirch.swagger.example
 
+import com.ubirch.swagger.example.Util.{extractValue, recompose}
 import com.ubirch.swagger.example.structure.VertexStructDb
-import com.ubirch.swagger.example.Util.extractValue
 import gremlin.scala._
-import org.apache.tinkerpop.gremlin.structure.util.empty.EmptyGraph
+import java.io._
+
 import org.joda.time.format.ISODateTimeFormat
 import org.joda.time.{DateTime, DateTimeZone}
 import org.scalatest.{FeatureSpec, Matchers}
 import org.slf4j.{Logger, LoggerFactory}
-import java.io._
 
 import scala.util.Random
 
 class Benchmarks extends FeatureSpec with Matchers {
 
-  implicit val graph: ScalaGraph = EmptyGraph.instance.asScala.configure(_.withRemote("configuration/remote-graph.properties"))
-  val g: TraversalSource = graph.traversal //graph.traversal.withRemote("configuration/remote-graph.properties")
+  implicit var gc: GremlinConnector = _
 
   private val dateTimeFormat = ISODateTimeFormat.dateTime()
 
   val Number: Key[String] = Key[String]("number")
   val Name: Key[String] = Key[String]("name")
   val Created: Key[String] = Key[String]("created")
+  val IdAssigned: Key[String] = Key[String]("IdAssigned")
+
 
   def log: Logger = LoggerFactory.getLogger(this.getClass)
 
   def deleteDatabase(): Unit = {
-    g.V().drop().iterate()
+    gc = new GremlinConnector
+    gc.g.V().drop().iterate()
+    gc.closeConnection()
   }
 
-  def truc() = {
-    //deleteDatabase()
+  def truc(): Unit = {
 
     // prepare
     val id1 = new Random().nextInt(1000000000)
@@ -54,53 +56,46 @@ class Benchmarks extends FeatureSpec with Matchers {
 
     //commit
     val t0 = System.nanoTime()
-
-    AddVertices.addTwoVertices(id1.toString, p1, id2.toString, p2, pE)
-
+    log.info("adding two vertices")
+    new AddVertices().addTwoVertices(id1.toString, p1, id2.toString, p2, pE)
+    log.info("the two vertices were added")
     // analyse
-    val v1Reconstructed = new VertexStructDb(id1.toString, g)
-    val v2Reconstructed = new VertexStructDb(id2.toString, g)
+    val v1Reconstructed = new VertexStructDb(id1.toString, gc.g)
+    log.info("first vertex reconstructed")
+    val v2Reconstructed = new VertexStructDb(id2.toString, gc.g)
+    log.info("second vertex reconstructed")
+
+    val arrayKeys = Array(IdAssigned, Name, Created, Number)
 
     val response1 = v1Reconstructed.getPropertiesMap
-    val idGottenBack1 = extractValue[String](response1, "IdAssigned")
-    val nameGottenBack1 = extractValue[String](response1, Name.name)
-    val createdGottenBack1 = extractValue[String](response1, Created.name)
-    val numberGottenBack1 = extractValue[String](response1, Number.name)
-    val propertiesReceived1 = List(
-      new KeyValue[String](Number, numberGottenBack1),
-      new KeyValue[String](Name, nameGottenBack1),
-      new KeyValue[String](Created, createdGottenBack1),
-    )
+    val idGottenBack1 = extractValue[String](response1, IdAssigned.name)
+    val propertiesReceived1 = recompose(response1, arrayKeys)
 
     val response2 = v2Reconstructed.getPropertiesMap
-    val idGottenBack2 = extractValue[String](response2, "IdAssigned")
-    val nameGottenBack2 = extractValue[String](response2, Name.name)
-    val createdGottenBack2 = extractValue[String](response2, Created.name)
-    val numberGottenBack2 = extractValue[String](response2, Number.name)
-    val propertiesReceived2 = List(
-      new KeyValue[String](Number, numberGottenBack2),
-      new KeyValue[String](Name, nameGottenBack2),
-      new KeyValue[String](Created, createdGottenBack2),
-    )
+    val idGottenBack2 = extractValue[String](response2, IdAssigned.name)
+    val propertiesReceived2 = recompose(response2, arrayKeys)
 
 
-    propertiesReceived1 shouldBe p1
-    propertiesReceived2 shouldBe p2
+    propertiesReceived1.sortBy(x => x.key.name) shouldBe p1.sortBy(x => x.key.name)
+    propertiesReceived2.sortBy(x => x.key.name) shouldBe p2.sortBy(x => x.key.name)
     id1.toString shouldBe idGottenBack1
     id2.toString shouldBe idGottenBack2
     val t1 = System.nanoTime()
 
-    log.info("time elapsed= " + (t1/1000000 - t0/1000000).toString + "ms")
 
     val pw = new BufferedWriter(new FileWriter("results/benchmarks.txt", true))
     pw.write((t1/1000000 - t0/1000000).toString + System.getProperty("line.separator"))
     pw.close()
+    log.info("time elapsed= " + (t1/1000000 - t0/1000000).toString + "ms")
+
   }
 
   scenario("add create two new vertex on an empty db, link them, verify that the result is correct") {
-    for(_ <- 0 to 100) {
+    gc = new GremlinConnector
+    for(_ <- 0 to 100000) {
       truc()
     }
+    gc.closeConnection()
     val pw = new BufferedReader(new FileReader("results/benchmarks.txt"))
     var line: String = ""
     var sum = 0
@@ -112,10 +107,8 @@ class Benchmarks extends FeatureSpec with Matchers {
         sum += line.toInt
         nbLines += 1
       } else stillGoing = false
-
     }
     log.info("average = " + (sum/nbLines).toString + "ms")
-
   }
 
 }

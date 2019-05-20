@@ -30,11 +30,12 @@ public class AddVertexes {
 
     /**
      * Method used to add two vertex to the JanusGraph database
+     *
      * @param id1 the (public) id of the first vertex
-     * @param p1 a HashMap containing the properties and their values of the first vertex
+     * @param p1  a HashMap containing the properties and their values of the first vertex
      * @param id2 the (public) id of the second vertex
-     * @param p2 a HashMap containing the properties and their values of the second vertex
-     * @param pE a HashMap containing the properties and their values of the edge
+     * @param p2  a HashMap containing the properties and their values of the second vertex
+     * @param pE  a HashMap containing the properties and their values of the edge
      * @return
      */
     public static String addTwoVertexes(int id1, Map<String, String> p1, int id2, Map<String, String> p2, Map<String, String> pE) {
@@ -60,13 +61,14 @@ public class AddVertexes {
                 break;
             case 1:
                 logger.info("1");
-                oneExist(v1, properties1,v2, properties2, propertiesE);
+                oneExist(v1, properties1, v2, properties2, propertiesE);
                 break;
             case 2:
                 logger.info("2");
                 bothExist(v1, v2, propertiesE);
                 break;
-            default: break;
+            default:
+                break;
         }
 
         sCon.closeConnection();
@@ -77,23 +79,29 @@ public class AddVertexes {
 
     /**
      * Check how many vertex exist
+     *
      * @param v1 the first vertex
      * @param v2 the second vertex
      * @return an integer between 0 and 2 indicating how many vertex exist
      */
     private static int howManyExist(VertexStructDb v1, VertexStructDb v2) {
         int i = 0;
-        if (v1.exist()) {i++;}
-        if (v2.exist()) {i++;}
+        if (v1.exist()) {
+            i++;
+        }
+        if (v2.exist()) {
+            i++;
+        }
         return i;
     }
 
     /**
      * Creates two vertexes and link them
-     * @param v1 first vertex
-     * @param v2 second vertex
-     * @param p1 properties of the first vertex
-     * @param p2 properties of the second vertex
+     *
+     * @param v1       first vertex
+     * @param v2       second vertex
+     * @param p1       properties of the first vertex
+     * @param p2       properties of the second vertex
      * @param propEdge properties of the edge
      */
     private static void noneExit(VertexStructDb v1, VertexStructDb v2, HashMap<String, String> p1, HashMap<String, String> p2, HashMap<String, String> propEdge) {
@@ -105,14 +113,15 @@ public class AddVertexes {
 
     /**
      * If one out of two vertex, creates the second one, and link them
-     * @param v1 first vertex
-     * @param v2 second vertex
-     * @param p1 properties of the first vertex
-     * @param p2 properties of the second vertex
+     *
+     * @param v1       first vertex
+     * @param v2       second vertex
+     * @param p1       properties of the first vertex
+     * @param p2       properties of the second vertex
      * @param propEdge properties of the edge
      */
     private static void oneExist(VertexStructDb v1, HashMap<String, String> p1, VertexStructDb v2, HashMap<String, String> p2, HashMap<String, String> propEdge) {
-        if(v1.exist()){
+        if (v1.exist()) {
             v2.addVertex(p2, g, b);
             createEdge(v1, v2, propEdge);
         } else {
@@ -123,35 +132,37 @@ public class AddVertexes {
 
     /**
      * Verify if the two existing vertex are linked, and if not, link them together
-     * @param v1 first vertex
-     * @param v2 second vertex
+     *
+     * @param v1       first vertex
+     * @param v2       second vertex
      * @param propEdge properties of the edge
      */
     private static void bothExist(VertexStructDb v1, VertexStructDb v2, HashMap<String, String> propEdge) {
-        if(areVertexesLinked(v1, v2)){
+        if (areVertexesLinked(v1, v2)) {
             logger.info("V1 and V2 are already linked");
-        } else{
+        } else {
             createEdge(v1, v2, propEdge);
         }
     }
 
     /**
      * Creates an edge between two existing vertex
+     *
      * @param vertexFrom Vertex from where the edge will be created
-     * @param vertexTo Vertex to where the edge will be created
+     * @param vertexTo   Vertex to where the edge will be created
      * @param properties Properties of the edge
      */
     private static void createEdge(VertexStructDb vertexFrom, VertexStructDb vertexTo, HashMap<String, String> properties) {
         String label = properties.get(LABEL);
-        if (label == null){
+        if (label == null) {
             label = "linked to";
-        } else{
+        } else {
             properties.remove(LABEL);
         }
         g.V(b.of(OUT_V, vertexFrom.getVertex())).as("a").V(b.of(IN_V, vertexTo.getVertex())).addE(b.of(LABEL, label)).from("a").iterate(); // add the label
 
         // add the other properties
-        for(HashMap.Entry<String, String> entry : properties.entrySet()){
+        for (HashMap.Entry<String, String> entry : properties.entrySet()) {
             GremlinPipeline pipe = new GremlinPipeline();
             pipe.start(g.V(vertexFrom.getVertex()).outE().as("e").inV().has(ID, vertexTo.getId()).select("e").property(entry.getKey(), b.of(entry.getKey(), entry.getValue())).next());
         }
@@ -160,13 +171,14 @@ public class AddVertexes {
 
     /**
      * Verify if two vertex are linked together
+     *
      * @param v1 first vertex
      * @param v2 second vertex
      * @return true if they''e already linked. false otherwise
      */
     private static boolean areVertexesLinked(VertexStructDb v1, VertexStructDb v2) {
-        GraphTraversal oneWay =  g.V(v1.getVertex()).outE().as("e").inV().has(ID, v2.getId()).select("e");
-        GraphTraversal otherWay =  g.V(v2.getVertex()).outE().as("e").inV().has(ID, v1.getId()).select("e");
+        GraphTraversal oneWay = g.V(v1.getVertex()).outE().as("e").inV().has(ID, v2.getId()).select("e");
+        GraphTraversal otherWay = g.V(v2.getVertex()).outE().as("e").inV().has(ID, v1.getId()).select("e");
         return !oneWay.toList().isEmpty() || !otherWay.toList().isEmpty();
 
     }

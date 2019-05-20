@@ -1,7 +1,6 @@
 package com.ubirch.swagger.example.fastimport;
 
 import com.tinkerpop.gremlin.java.GremlinPipeline;
-import com.ubirch.swagger.example.StructDB.VertexStructDb;
 import org.apache.tinkerpop.gremlin.process.traversal.Bindings;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -37,20 +36,20 @@ public class VertexStructFastImport {
     }
 
 
-    public void addVertex(HashMap<String, String> properties, GraphTraversalSource g, Bindings b, String label){
-        if(exist) {
+    public void addVertex(HashMap<String, String> properties, GraphTraversalSource g, Bindings b, String label) {
+        if (exist) {
             throw new InstantiationError("Vertex already exist in the database");
         }
         this.vertex = g.addV(b.of("label", label)).property("keyy", b.of("keyy", id)).next();
 
-        for (Map.Entry<String, String> entry : properties.entrySet()){
+        for (Map.Entry<String, String> entry : properties.entrySet()) {
             GremlinPipeline pipe = new GremlinPipeline();
             pipe.start(g.V(this.vertex.id()).property(entry.getKey(), b.of(entry.getKey(), entry.getValue())).next());
         }
 
     }
 
-    public Vertex getVertex(){
+    public Vertex getVertex() {
         return this.vertex;
     }
 }
